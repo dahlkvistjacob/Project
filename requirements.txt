@@ -1,0 +1,6 @@
+pandas
+hopsworks
+datetime
+requests
+joblib
+dotenv
