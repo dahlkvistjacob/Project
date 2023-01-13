@@ -3,4 +3,4 @@ hopsworks
 datetime
 requests
 joblib
-dotenv
+python-dotenv

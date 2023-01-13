@@ -3,6 +3,7 @@ import requests
 import os
 import joblib
 import pandas as pd
+import numpy as np
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -71,56 +72,33 @@ def get_air_quality_data(city_name):
     iaqi = json['iaqi']
     forecast = json['forecast']['daily']
     return [
-        city_name,
-        json['aqi'],                 # AQI
         json['time']['s'][:10],      # Date
-        iaqi['h']['v'],
-        iaqi['p']['v'],
+        iaqi['pm25']['v'],
         iaqi['pm10']['v'],
-        iaqi['t']['v'],
-        forecast['o3'][0]['avg'],
-        forecast['o3'][0]['max'],
-        forecast['o3'][0]['min'],
-        forecast['pm10'][0]['avg'],
-        forecast['pm10'][0]['max'],
-        forecast['pm10'][0]['min'],
-        forecast['pm25'][0]['avg'],
-        forecast['pm25'][0]['max'],
-        forecast['pm25'][0]['min'],
-        forecast['uvi'][0]['avg'],
-        forecast['uvi'][0]['avg'],
-        forecast['uvi'][0]['avg']
+        iaqi['o3']['v'],
+        iaqi['no2']['v'],
+        iaqi['so2']['v'],
+        iaqi['co']['v'],
     ]
 
 def get_air_quality_df(data):
     col_names = [
-        'city',
-        'aqi',
+        # 'city',
         'date',
-        'iaqi_h',
-        'iaqi_p',
-        'iaqi_pm10',
-        'iaqi_t',
-        'o3_avg',
-        'o3_max',
-        'o3_min',
-        'pm10_avg',
-        'pm10_max',
-        'pm10_min',
-        'pm25_avg',
-        'pm25_max',
-        'pm25_min',
-        'uvi_avg',
-        'uvi_max',
-        'uvi_min',
+        'pm25',
+        'pm10',
+        'o3',
+        'no2',
+        'so2',
+        'co'
     ]
 
     new_data = pd.DataFrame(
         data,
         columns=col_names
     )
-    new_data.date = new_data.date.apply(timestamp_2_time)
-
+    new_data.date = new_data.date.apply(timestamp_2_time_hyphen)
+    new_data[["pm25", "pm10", "o3", "no2", "so2", "co"]] = new_data[["pm25", "pm10", "o3", "no2", "so2", "co"]].astype(float)
     return new_data
 
 
@@ -158,13 +136,19 @@ def get_weather_data(city_name, date):
         data['solarradiation'],
         data['solarenergy'],
         data['uvindex'],
-        data['conditions']
+        data['severerisk'],
+        data['sunrise'],
+        data['sunset'],
+        data['moonphase'],
+        data['conditions'],
+        data['description'],
+        data['icon'],
     ]
 
 
 def get_weather_df(data):
     col_names = [
-        'city',
+        'name',
         'date',
         'tempmax',
         'tempmin',
@@ -182,24 +166,37 @@ def get_weather_df(data):
         'windgust',
         'windspeed',
         'winddir',
-        'pressure',
+        'sealevelpressure',
         'cloudcover',
         'visibility',
         'solarradiation',
         'solarenergy',
         'uvindex',
-        'conditions'
+        'severerisk',
+        'sunrise',
+        'sunset',
+        'moonphase',
+        'conditions',
+        'description',
+        'icon',
     ]
 
     new_data = pd.DataFrame(
         data,
         columns=col_names
     )
-    new_data.date = new_data.date.apply(timestamp_2_time)
+    new_data[["uvindex"]] = new_data[["uvindex"]].applymap(np.int64)
+    new_data.date = new_data.date.apply(timestamp_2_time_hyphen)
 
     return new_data
 
 def timestamp_2_time(x):
+    dt_obj = datetime.strptime(str(x), '%Y/%m/%d')
+    dt_obj = dt_obj.timestamp() * 1000
+    return int(dt_obj)
+
+
+def timestamp_2_time_hyphen(x):
     dt_obj = datetime.strptime(str(x), '%Y-%m-%d')
     dt_obj = dt_obj.timestamp() * 1000
     return int(dt_obj)
