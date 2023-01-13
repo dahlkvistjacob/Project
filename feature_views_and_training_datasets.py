@@ -13,26 +13,26 @@ air_quality_fg = fs.get_or_create_feature_group(
     name = 'air_quality_fg',
     version = 1
 )
-# weather_fg = fs.get_or_create_feature_group(
-#     name = 'weather_fg',
-#     version = 1
-# )
+weather_fg = fs.get_or_create_feature_group(
+    name = 'weather_fg',
+    version = 1
+)
 
-query = air_quality_fg.select_all()
+query = air_quality_fg.select_all().join(weather_fg.select_all(include_event_time=False))
 
-#query.read()
+query.read()
 
 """
 FEATURE VIEW CREATION AND RETRIEVING
 """
-query = air_quality_fg.select_all()
+query = air_quality_fg.select_all().join(weather_fg.select_all(include_event_time=False))
 
 query_show = query.show(5)
 col_names = query_show.columns
 
 query_show
 
-#Transformation functions
+# Transformation functions
 
 [t_func.name for t_func in fs.get_transformation_functions()]
 
