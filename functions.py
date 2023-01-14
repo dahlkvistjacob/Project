@@ -130,7 +130,7 @@ def get_weather_data(city_name, date):
         data['windgust'],
         data['windspeed'],
         data['winddir'],
-        data['pressure'],
+        # data['pressure'],
         data['cloudcover'],
         data['visibility'],
         data['solarradiation'],
@@ -166,7 +166,7 @@ def get_weather_df(data):
         'windgust',
         'windspeed',
         'winddir',
-        'sealevelpressure',
+        # 'sealevelpressure',
         'cloudcover',
         'visibility',
         'solarradiation',
@@ -200,3 +200,21 @@ def timestamp_2_time_hyphen(x):
     dt_obj = datetime.strptime(str(x), '%Y-%m-%d')
     dt_obj = dt_obj.timestamp() * 1000
     return int(dt_obj)
+
+def calculate_aqi(pm25):
+    if pm25 <= 12:
+        aqi = pm25 * 50
+    elif pm25 <= 35.4:
+        aqi = ((pm25 - 12.1) * (50 / 23.3)) + 50
+    elif pm25 <= 55.4:
+        aqi = ((pm25 - 35.5) * (100 / 20)) + 100
+    elif pm25 <= 150.4:
+        aqi = ((pm25 - 55.5) * (100 / 95)) + 200
+    elif pm25 <= 250.4:
+        aqi = ((pm25 - 150.5) * (100 / 100)) + 300
+    elif pm25 <= 500.4:
+        aqi = ((pm25 - 250.5) * (100 / 250)) + 400
+    else:
+        aqi = 500
+
+    return aqi

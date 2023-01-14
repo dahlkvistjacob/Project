@@ -1,4 +1,5 @@
 import pandas as pd
+from functions import calculate_aqi
 
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import f1_score
@@ -11,16 +12,16 @@ CONNECTING TO HOPSWORKS
 """
 import hopsworks
 
-project = hopsworks.login() 
+project = hopsworks.login()
 
-fs = project.get_feature_store() 
+fs = project.get_feature_store()
 
 """
 FEATURE VIEW AND TRAINING DATASET RETRIEVAL
 """
 feature_view = fs.get_feature_view(
     name = 'air_quality',
-    version = 25
+    version = 26
 )
 train_data = feature_view.get_training_data(1)[0]
 
@@ -35,8 +36,9 @@ MODELING
 
 import xgboost
 
-train_data = train_data.sort_values(by=["date", 'city'], ascending=[False, True]).reset_index(drop=True)
-train_data["aqi_next_day"] = train_data.groupby('city')['aqi'].shift(1)
+train_data = train_data.sort_values(by=["date"], ascending=[False, True]).reset_index(drop=True)
+train_data["aqi_next_day"] = train_data['pm25'].shift(1)
+train_data["aqi_next_day"] = train_data['aqi_next_day'].apply(calculate_aqi)
 
 train_data.head(5)
 
