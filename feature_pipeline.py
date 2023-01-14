@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import datetime
-import time
+import time 
 import requests
 
 from functions import *
@@ -11,7 +11,7 @@ date_today = datetime.now().strftime("%Y-%m-%d")
 PARSING DATA
 """
 #Gets the air quality for specified cities
-cities = ['Beijing']
+cities = ['Kyiv']
 data_air_quality = [get_air_quality_data(city) for city in cities]
 data_weather = [get_weather_data(city, date_today) for city in cities]
 
@@ -33,7 +33,7 @@ import hopsworks
 
 project = hopsworks.login()
 
-fs = project.get_feature_store()
+fs = project.get_feature_store() 
 
 air_quality_fg = fs.get_or_create_feature_group(
     name = 'air_quality_fg',
