@@ -61,3 +61,5 @@ Figure 1 displays the importance of the various features. It can be concluded th
      style="float: under; margin-under: 5px;" />
 Figure 3. Hugging Face interface
 
+Hugging Face URL: https://huggingface.co/spaces/tlord/air_quality_index
+
