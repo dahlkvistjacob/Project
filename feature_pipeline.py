@@ -61,6 +61,7 @@ def g():
     weather_fg.insert(df_weather)
 
 if __name__ == "__main__":
+    stub.deploy("daily_data_injection")
     if LOCAL == True :
         g()
     else:

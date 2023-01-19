@@ -9,7 +9,7 @@ LOCAL=False
 if LOCAL == False:
    stub = modal.Stub()
    hopsworks_image = modal.Image.debian_slim().pip_install(["hopsworks", "joblib", "scikit-learn", "xgboost"])
-   @stub.function(image=hopsworks_image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
+   @stub.function(image=hopsworks_image, schedule=modal.Period(hours=8), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
    def f():
        g()
 
@@ -60,6 +60,7 @@ def g():
     res = dataset_api.upload("./AQI_Predictions.csv", "Resources/data", overwrite=True)
 
 if __name__ == "__main__":
+    stub.deploy("daily_predictions")
     if LOCAL == True :
         g()
     else:
